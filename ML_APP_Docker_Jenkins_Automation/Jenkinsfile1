@@ -10,16 +10,18 @@ pipeline {
         }
         stage('Build') {
             steps {
-                git branch: 'main', credentialsId: 'devops_balu_github', url: 'https://github.com/balusena/devops_balu_github.git'
-                sh 'docker build -t money_api:new .'
+                dir('ML_APP_Docker_Jenkins_Automation') {
+                    git branch: 'main', credentialsId: 'devops_balu_github', url: 'https://github.com/balusena/devops_balu_github.git'
+                    sh 'docker build -t money_api:latest .'
+                }
             }
         }
         stage('Push to Docker Hub') {
             steps {
                 withCredentials([string(credentialsId: 'balusena_dockerhub', variable: 'balusena_dockerhub')]) {
                     sh 'docker login -u balusena -p ${balusena_dockerhub}'
-                    sh 'docker tag money_api:new balusena/money_api:new'
-                    sh 'docker push balusena/money_api:new'
+                    sh 'docker tag money_api:latest balusena/money_api:latest'
+                    sh 'docker push balusena/money_api:latest'
                 }
             }
         }
