@@ -18,8 +18,10 @@ pipeline {
         }
         stage('Push to Docker Hub') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'balusena_dockerhub', variable: 'balusena_dockerhub')]) {
-                    sh 'docker login -u balusena -p ${balusena_dockerhub}'
+                withCredentials([
+                    usernamePassword(credentialsId: 'balusena_dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')
+                ]) {
+                    sh "docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}"
                     sh 'docker tag money_api:latest balusena/money_api:latest'
                     sh 'docker push balusena/money_api:latest'
                 }
